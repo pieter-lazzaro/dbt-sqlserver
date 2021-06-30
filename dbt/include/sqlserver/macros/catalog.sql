@@ -19,14 +19,14 @@
     cols as (
 
         select
-            table_catalog as table_database,
-            table_schema,
-            table_name,
-            column_name,
-            ordinal_position as column_index,
-            data_type as column_type,
+            TABLE_CATALOG as table_database,
+            TABLE_SCHEMA,
+            TABLE_NAME,
+            COLUMN_NAME,
+            ORDINAL_POSITION as column_index,
+            DATA_TYPE as column_type,
 			null as column_comment
-        from information_schema.columns
+        from INFORMATION_SCHEMA.COLUMNS
 
     )
 

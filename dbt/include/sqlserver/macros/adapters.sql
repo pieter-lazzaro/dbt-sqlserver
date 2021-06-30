@@ -1,5 +1,5 @@
 {% macro sqlserver__information_schema_name(database) -%}
-  information_schema
+  INFORMATION_SCHEMA
 {%- endmacro %}
 
 
@@ -18,16 +18,16 @@
 {% macro sqlserver__list_relations_without_caching(schema_relation) %}
   {% call statement('list_relations_without_caching', fetch_result=True) -%}
     select
-      table_catalog as [database],
-      table_name as [name],
-      table_schema as [schema],
-      case when table_type = 'BASE TABLE' then 'table'
-           when table_type = 'VIEW' then 'view'
-           else table_type
+      TABLE_CATALOG as [database],
+      TABLE_NAME as [name],
+      TABLE_SCHEMA as [schema],
+      case when TABLE_TYPE = 'BASE TABLE' then 'table'
+           when TABLE_TYPE = 'VIEW' then 'view'
+           else TABLE_TYPE
       end as table_type
 
-    from [{{ schema_relation.database }}].information_schema.tables
-    where table_schema like '{{ schema_relation.schema }}'
+    from [{{ schema_relation.database }}].INFORMATION_SCHEMA.TABLES
+    where TABLE_SCHEMA like '{{ schema_relation.schema }}'
   {% endcall %}
   {{ return(load_result('list_relations_without_caching').table) }}
 {% endmacro %}
@@ -179,33 +179,33 @@
 {% macro sqlserver__get_columns_in_relation(relation) -%}
   {% call statement('get_columns_in_relation', fetch_result=True) %}
       SELECT
-          column_name,
-          data_type,
-          character_maximum_length,
-          numeric_precision,
-          numeric_scale
+          COLUMN_NAME,
+          DATA_TYPE,
+          CHARACTER_MAXIMUM_LENGTH,
+          NUMERIC_PRECISION,
+          NUMERIC_SCALE
       FROM
           (select
-              ordinal_position,
-              column_name,
-              data_type,
-              character_maximum_length,
-              numeric_precision,
-              numeric_scale
+              ORDINAL_POSITION,
+              COLUMN_NAME,
+              DATA_TYPE,
+              CHARACTER_MAXIMUM_LENGTH,
+              NUMERIC_PRECISION,
+              NUMERIC_SCALE
           from [{{ relation.database }}].INFORMATION_SCHEMA.COLUMNS
-          where table_name = '{{ relation.identifier }}'
-            and table_schema = '{{ relation.schema }}'
+          where TABLE_NAME = '{{ relation.identifier }}'
+            and TABLE_SCHEMA = '{{ relation.schema }}'
           UNION ALL
           select
-              ordinal_position,
-              column_name collate database_default,
-              data_type collate database_default,
-              character_maximum_length,
-              numeric_precision,
-              numeric_scale
+              ORDINAL_POSITION,
+              COLUMN_NAME collate database_default,
+              DATA_TYPE collate database_default,
+              CHARACTER_MAXIMUM_LENGTH,
+              NUMERIC_PRECISION,
+              NUMERIC_SCALE
           from tempdb.INFORMATION_SCHEMA.COLUMNS
-          where table_name like '{{ relation.identifier }}%') cols
-      order by ordinal_position
+          where TABLE_NAME like '{{ relation.identifier }}%') cols
+      order by ORDINAL_POSITION
 
 
   {% endcall %}
